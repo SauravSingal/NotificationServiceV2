@@ -16,5 +16,5 @@ public class User {
     @Column(nullable = false)
     String message;
     @Column(nullable = false)
-    String messageType;
+    String channel;
 }
