@@ -36,12 +36,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/auth/**",
-                                "/api/v1/auth/login",
-                                "/api/v1/auth/refresh",
-                                "/actuator/health",
-                                "/actuator/info"
+                                "/api/v1/auth/login"
                         ).permitAll()
-                        .requestMatchers("/api/v1/auth/validate").permitAll()  // called by gateway
                         .anyRequest().authenticated()
                 )
                 //.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
