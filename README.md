@@ -19,14 +19,20 @@ JWT secutiy breakdown:
 
 9. User continues seamlessly
 
+```
 when will happen if access token is expired but refresh token may not be expired:
 
 API Call
-   |
-   ├── 200 OK → Continue
-   |
-   └── 401 Unauthorized
-          |
-          ├── Refresh succeeds → Retry original request
-          |
-          └── Refresh fails → Redirect to Login
+│
+├── 200 OK
+│   └── Continue
+│
+└── 401 Unauthorized
+    │
+    ├── Refresh Token Valid
+    │   ├── Generate New Access Token
+    │   └── Retry Original Request
+    │
+    └── Refresh Token Invalid/Expired
+        └── Redirect to Login
+```
