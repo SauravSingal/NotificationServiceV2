@@ -1,6 +1,7 @@
 package org.example.notificationservicev2.security;
 
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -28,5 +29,14 @@ public class JwtUtil {
                 .expiration(new Date(System.currentTimeMillis() + 1000*60*15))
                 .signWith(getSecretKey())
                 .compact();
+    }
+
+    public String getUserNameFromToken(String token) {
+        Claims claims = Jwts.parser()
+                .verifyWith(getSecretKey())
+                .build()
+                .parseSignedClaims(token).getPayload();
+        return claims.getSubject();
+
     }
 }

@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.notificationservicev2.dto.LoginResponseDTO;
 import org.example.notificationservicev2.dto.RegisterRequest;
 import org.example.notificationservicev2.entity.User;
+import org.example.notificationservicev2.exception.EmailAlreadyExistsException;
 import org.example.notificationservicev2.repository.UserRepository;
 import org.example.notificationservicev2.security.JwtUtil;
 import org.springframework.context.annotation.Bean;
@@ -29,7 +30,7 @@ public class AuthService {
 
     public User authRegister (RegisterRequest request) {
         if(userRepository.existsByEmail(request.getEmail())){
-            throw new UsernameNotFoundException("Email already in use");
+            throw new EmailAlreadyExistsException(request.getEmail());
         }
         User user = User.builder().email(request.getEmail()).
                 password(passwordEncoder.encode(request.getPassword())).build();
@@ -41,7 +42,6 @@ public class AuthService {
         Authentication authentication = authenticationManager.authenticate(
              new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword())
         );
-
         User foundInDB = (User) authentication.getPrincipal();
         String token = jwtUtil.generateToken(foundInDB);
         return new LoginResponseDTO(token, foundInDB.getEmail(), foundInDB.getId());
