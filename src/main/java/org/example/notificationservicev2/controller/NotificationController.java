@@ -1,12 +1,12 @@
 package org.example.notificationservicev2.controller;
 
 
-import org.example.notificationservicev2.dto.UserRequest;
+import org.example.notificationservicev2.dto.RegisterRequest;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
-public class NotificationService {
+public class NotificationController {
 
     @GetMapping("/hello")
     public String hello() {
@@ -14,7 +14,8 @@ public class NotificationService {
     }
 
     @PostMapping("/sendNotification")
-    public String sendNotification(@RequestBody UserRequest user) {
+    public String sendNotification(@RequestBody RegisterRequest user) {
+        
         return user.toString();
     }
 }
