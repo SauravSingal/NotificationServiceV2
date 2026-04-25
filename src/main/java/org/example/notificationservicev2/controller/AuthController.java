@@ -24,9 +24,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public LoginResponseDTO login(@RequestBody RegisterRequest user) {
-        User response =  authService.authLogin(user);
-        return new LoginResponseDTO("token",response.getEmail(), response.getId());
-
+        return  authService.authLogin(user);
     }
 
 }
