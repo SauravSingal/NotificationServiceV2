@@ -58,3 +58,26 @@ LOGOUT
   Delete the refresh token from Redis
   (even if the UUID is stolen, it's now invalid)
 ```
+
+
+```
+Updated flow:
+POST /api/notifications/send
+     ├── Redis: rate limit check
+     ▼
+Kafka Topic: notifications
+     ▼
+NotificationConsumer
+     └── Save to DB (type: EMAIL or IN_APP)
+     └── Redis: increment unread:userId
+     ▼ (on failure after 3 retries)
+Kafka Topic: notifications.DLQ
+     ▼
+DLQConsumer → saves to DB with status: FAILED
+And your APIs will be:
+POST   /api/notifications/send          ← publish to Kafka
+GET    /api/notifications/my            ← fetch my notifications
+PATCH  /api/notifications/{id}/read     ← mark as read
+GET    /api/notifications/unread-count  ← from Redis cache
+
+```
