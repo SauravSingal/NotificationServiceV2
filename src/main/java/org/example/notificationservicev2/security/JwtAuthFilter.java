@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.example.notificationservicev2.entity.User;
 import org.example.notificationservicev2.repository.UserRepository;
+import org.example.notificationservicev2.service.TokenBlackListService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -22,7 +23,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private final HandlerExceptionResolver handlerExceptionResolver;
-
+    private final TokenBlackListService tokenBlackListService;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
@@ -31,6 +32,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             if (requestToken != null && requestToken.startsWith("Bearer ")) {
                 final String token = requestToken.substring(7);
                 String tokenUsername = jwtUtil.getUserNameFromToken(token);
+                if (tokenBlackListService.isBlacklisted(token)) {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"error\": \"Token has been invalidated\"}");
+                    return;
+                }
                 if (tokenUsername != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                     User user = userRepository.findByEmail(tokenUsername).orElseThrow();
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
