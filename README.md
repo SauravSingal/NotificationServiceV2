@@ -1,3 +1,11 @@
+
+
+if you have issues with time zone.
+->settings, force it in IntelliJ:
+->Run → Edit Configurations → your Spring Boot app → Modify options → Add VM options:
+```
+      -Duser.timezone=Asia/Kolkata
+```      
 JWT secutiy breakdown:
 
 1. User logs in
