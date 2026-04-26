@@ -36,3 +36,25 @@ API Call
     └── Refresh Token Invalid/Expired
         └── Redirect to Login
 ```
+
+```
+LOGIN
+  │
+  ├─→ Generate Access Token  (JWT, 15 min, stateless)
+  └─→ Generate Refresh Token (random UUID, 7 days)
+        └─→ Save in Redis: Key="refresh:userId", Value="the-uuid-token"
+        └─→ Send BOTH tokens to client
+
+NORMAL API CALL
+  Client sends Access Token → JwtAuthFilter validates it → done (Redis not touched)
+
+ACCESS TOKEN EXPIRES
+  Client sends Refresh Token to POST /auth/refresh
+        └─→ Backend looks up Redis: does this token exist?
+        └─→ Yes → generate new Access Token → return it
+        └─→ No/Expired → 401, force re-login
+
+LOGOUT
+  Delete the refresh token from Redis
+  (even if the UUID is stolen, it's now invalid)
+```
