@@ -50,7 +50,6 @@ public class WebSecurityConfig {
                             response.getWriter().write("{\"error\": \"Access denied\"}");
                         })
                 )
-
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
