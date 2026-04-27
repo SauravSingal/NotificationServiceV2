@@ -26,6 +26,9 @@ public class Notification {
     private String message;
     private String status;     // DELIVERED, FAILED
     private boolean read;
-
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
 }
